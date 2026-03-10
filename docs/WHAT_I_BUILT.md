@@ -24,7 +24,7 @@ It is a fully automated background processor that utilizes **free API tiers** an
 
 ## 2. A-to-Z Deep Dive: The Automated Pipeline Execution Flow
 
-When a user triggers the system via the `POST /api/pipeline/start` endpoint (providing a `targetDomain` and an array of `keywords`), it initiates an orchestration of 6 independent, fault-tolerant background workers managed by BullMQ and Redis.
+When a user triggers the system via the `POST /api/pipeline/start` endpoint (providing a `targetDomain` and an array of `keywords`), it initiates an orchestration of 7 independent, fault-tolerant background workers managed by BullMQ and Redis.
 
 Here is the exact technical execution sequence:
 
@@ -59,7 +59,10 @@ Here is the exact technical execution sequence:
 *   **Logic:** It reads the text and matches it against keyword/intent patterns to classify the opportunity:
     *   **Guest Post:** (Looks for phrases like "write for us", "guest post guidelines", "contribute"). Assigns a high base score.
     *   **Resource Page:** (Looks for "useful links", "recommended tools").
-    *   **Directory:** (Looks for "submit your site", "web directory").
+    *   **Listicle:** (Looks for "top 10", "best tools", "best alternatives").
+    *   **Directory:** (Looks for "submit your site", "web directory", "add listing").
+    *   **Social Bookmarking:** (Looks for "bookmark", "submit link", "social bookmarking").
+    *   **Blog Mention:** (Looks for "as seen on", "highly recommend").
     *   **Forum / Niche Edit:** Default fallbacks.
 *   **Output:** Calculates a final Opportunity Score combining the classification intent with the domain quality. High-scoring opportunities (e.g., Score > 50) are queued for email discovery.
 
@@ -80,6 +83,21 @@ Here is the exact technical execution sequence:
     3.  **Snov.io API:** If Hunter fails, it queries Snov.io.
     4.  **Pattern Guessing (Free fallback):** As a last resort, it generates permutations like `editor@domain.com`, `contact@domain.com`, and `info@domain.com`.
 *   **Output:** Populates the `contacts` table, perfectly linking an opportunity URL with a direct contact email.
+
+### Phase G: Directory & Social Bookmarking Discovery (The `directoryFinderWorker.js`)
+*   **Objective:** Find directory submission and social bookmarking platforms — the bread-and-butter of off-page SEO outreach.
+*   **Mechanism:** Uses a **3-layer switchable discovery system** controlled by the `DIRECTORY_DISCOVERY_MODE` environment variable:
+
+| Layer                               | Method                                                                                                                                                                                 | Cost         | Always Active?        |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------------- |
+| **1. Curated Seed Lists**           | Imports ~100 known directories (Jasmine, Clutch, BOTW) and ~60 social bookmarking sites (Mix, Diigo, Scoop.it) from hardcoded JSON files                                               | Free         | ✅ Yes                 |
+| **2. Directory Footprint Crawling** | Probes every discovered domain for submission paths (`/submit-site`, `/add-listing`, `/add-url`, `/submit-listing`, etc.). If any returns HTTP 200, the site is flagged as a directory | Free         | ✅ Yes                 |
+| **3. SERP Footprint Mining**        | Runs targeted search queries like `"submit your site" + [keyword]` and `"social bookmarking" + [keyword]` to discover niche-specific platforms                                         | SERP credits | Only in `hybrid` mode |
+
+*   **Switchable Mode:**
+    *   `DIRECTORY_DISCOVERY_MODE=curated_only` → Layers 1 + 2 only (zero API cost)
+    *   `DIRECTORY_DISCOVERY_MODE=hybrid` → All 3 layers active (costs ~20-40 SERP calls per campaign)
+*   **Output:** Inserts opportunities with type `directory` or `social_bookmarking` into the `opportunities` table, and queues high-scoring ones for email discovery.
 
 ---
 
@@ -126,7 +144,7 @@ The frontend dashboard provides a real-time view of the engine's extraction proc
 
 1. **Domains Found:** The total number of unique website domains the system has discovered, either as direct competitors or as sites that link to competitors. Every domain here is queued for the Quality Analysis phase (Tranco/OpenPageRank scoring).
 2. **Backlinks:** The total raw count of verified, active outbound links pointing to your competitors. This includes every link found via SERP mining, crawling, or the Common Crawl database. This is the "raw ore" before filtering.
-3. **Opportunities:** The highly refined, actionable subset of data. An "Opportunity" is created only when a domain passes the quality threshold (high Domain Authority) **and** the AI text classifier successfully identifies *how* you can get a link from them (e.g., categorizing it as a Guest Post, Resource Page, or Directory). These are the rows you actually export and email.
+3. **Opportunities:** The highly refined, actionable subset of data. An "Opportunity" is created only when a domain passes the quality threshold (high Domain Authority) **and** the AI text classifier successfully identifies *how* you can get a link from them (e.g., categorizing it as a Guest Post, Resource Page, Directory, Social Bookmarking, Listicle, or Blog Mention). These are the rows you actually export and email.
 4. **Contacts:** The total number of verified, human email addresses the engine has successfully located for your "Opportunities." These are found by actively scraping the target's `/contact` pages or by pinging the Hunter.io/Snov.io APIs.
 5. **Broken Links:** The number of dead/404 out-bound links the engine discovered while crawling a target's resource page. Each broken link is a highly-converting excuse to email the site owner.
 6. **Active Jobs:** The real-time pulse of the BullMQ/Redis background queue. This shows exactly how many concurrent scrapers, AI analyzers, and email finders are currently executing tasks in the background on your server.

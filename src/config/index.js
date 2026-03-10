@@ -55,6 +55,11 @@ module.exports = {
         },
     },
 
+    // ─── Directory Discovery ───
+    directoryDiscovery: {
+        mode: process.env.DIRECTORY_DISCOVERY_MODE || 'hybrid', // 'hybrid' | 'curated_only'
+    },
+
     // ─── Alert Webhook ───
     alertWebhookUrl: process.env.ALERT_WEBHOOK_URL || null,
 

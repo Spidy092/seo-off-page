@@ -1,0 +1,187 @@
+[
+  {
+    "url": "https://mix.com",
+    "name": "Mix (StumbleUpon)",
+    "category": "general"
+  },
+  {
+    "url": "https://www.diigo.com",
+    "name": "Diigo",
+    "category": "general"
+  },
+  {
+    "url": "https://www.scoop.it",
+    "name": "Scoop.it",
+    "category": "content_curation"
+  },
+  {
+    "url": "https://slashdot.org",
+    "name": "Slashdot",
+    "category": "tech"
+  },
+  {
+    "url": "https://www.pearltrees.com",
+    "name": "Pearltrees",
+    "category": "general"
+  },
+  {
+    "url": "https://www.bibsonomy.org",
+    "name": "BibSonomy",
+    "category": "academic"
+  },
+  {
+    "url": "https://getpocket.com",
+    "name": "Pocket",
+    "category": "general"
+  },
+  {
+    "url": "https://www.fark.com",
+    "name": "Fark",
+    "category": "news"
+  },
+  {
+    "url": "https://www.newsvine.com",
+    "name": "Newsvine",
+    "category": "news"
+  },
+  {
+    "url": "https://www.digg.com",
+    "name": "Digg",
+    "category": "news"
+  },
+  {
+    "url": "https://flipboard.com",
+    "name": "Flipboard",
+    "category": "content_curation"
+  },
+  {
+    "url": "https://www.plurk.com",
+    "name": "Plurk",
+    "category": "social"
+  },
+  {
+    "url": "https://www.symbaloo.com",
+    "name": "Symbaloo",
+    "category": "education"
+  },
+  {
+    "url": "https://www.designfloat.com",
+    "name": "DesignFloat",
+    "category": "design"
+  },
+  {
+    "url": "https://www.twingly.com",
+    "name": "Twingly",
+    "category": "blog"
+  },
+  {
+    "url": "https://lobste.rs",
+    "name": "Lobsters",
+    "category": "tech"
+  },
+  {
+    "url": "https://www.pinboard.in",
+    "name": "Pinboard",
+    "category": "general"
+  },
+  {
+    "url": "https://www.evernote.com",
+    "name": "Evernote Web Clipper",
+    "category": "productivity"
+  },
+  {
+    "url": "https://raindrop.io",
+    "name": "Raindrop.io",
+    "category": "general"
+  },
+  {
+    "url": "https://www.wakelet.com",
+    "name": "Wakelet",
+    "category": "content_curation"
+  },
+  {
+    "url": "https://www.refind.com",
+    "name": "Refind",
+    "category": "general"
+  },
+  {
+    "url": "https://www.bizsugar.com",
+    "name": "BizSugar",
+    "category": "business"
+  },
+  {
+    "url": "https://www.managewp.org",
+    "name": "ManageWP",
+    "category": "wordpress"
+  },
+  {
+    "url": "https://www.aboutus.com",
+    "name": "AboutUs",
+    "category": "general"
+  },
+  {
+    "url": "https://www.bookmax.net",
+    "name": "BookMax",
+    "category": "general"
+  },
+  {
+    "url": "https://www.dropjack.com",
+    "name": "DropJack",
+    "category": "general"
+  },
+  {
+    "url": "https://www.tagza.com",
+    "name": "Tagza",
+    "category": "general"
+  },
+  {
+    "url": "https://www.social-bookmarkingsites.com",
+    "name": "Social Bookmarking Sites",
+    "category": "general"
+  },
+  {
+    "url": "https://www.oyax.com",
+    "name": "Oyax",
+    "category": "general"
+  },
+  {
+    "url": "https://www.bookmarkee.com",
+    "name": "Bookmarkee",
+    "category": "general"
+  },
+  {
+    "url": "https://www.bookmark4you.com",
+    "name": "Bookmark4You",
+    "category": "general"
+  },
+  {
+    "url": "https://www.lasso.net",
+    "name": "Lasso",
+    "category": "general"
+  },
+  {
+    "url": "https://www.merlot.org",
+    "name": "MERLOT",
+    "category": "education"
+  },
+  {
+    "url": "https://www.listal.com",
+    "name": "Listal",
+    "category": "entertainment"
+  },
+  {
+    "url": "https://www.addthis.com",
+    "name": "AddThis",
+    "category": "sharing"
+  },
+  {
+    "url": "https://www.sharethis.com",
+    "name": "ShareThis",
+    "category": "sharing"
+  },
+  {
+    "url": "https://www.blogmarks.net",
+    "name": "BlogMarks",
+    "category": "blog"
+  }
+]

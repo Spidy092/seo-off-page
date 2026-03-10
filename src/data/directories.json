@@ -1,0 +1,332 @@
+[
+  {
+    "url": "https://www.jasminedirectory.com",
+    "name": "Jasmine Directory",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.somuch.com",
+    "name": "SoMuch",
+    "category": "general",
+    "submitPath": "/submitlink.html"
+  },
+  {
+    "url": "https://www.activesearchresults.com",
+    "name": "Active Search Results",
+    "category": "general",
+    "submitPath": "/addwebsite.php"
+  },
+  {
+    "url": "https://www.einternetindex.com",
+    "name": "eInternet Index",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.sitepromotiondirectory.com",
+    "name": "Site Promotion Directory",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.prolinkdirectory.com",
+    "name": "ProLink Directory",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.9sites.net",
+    "name": "9Sites",
+    "category": "general",
+    "submitPath": "/addurl.html"
+  },
+  {
+    "url": "https://www.a1webdirectory.org",
+    "name": "A1 Web Directory",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.abilogic.com",
+    "name": "Abilogic",
+    "category": "general",
+    "submitPath": "/addurl.html"
+  },
+  {
+    "url": "https://www.addgoodsites.com",
+    "name": "Add Good Sites",
+    "category": "general",
+    "submitPath": "/submit-link.html"
+  },
+  {
+    "url": "https://www.alivedirectory.com",
+    "name": "Alive Directory",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.bedwan.com",
+    "name": "Bedwan",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.blogarama.com",
+    "name": "Blogarama",
+    "category": "blog",
+    "submitPath": "/add-blog"
+  },
+  {
+    "url": "https://www.bloggingfusion.com",
+    "name": "Blogging Fusion",
+    "category": "blog",
+    "submitPath": "/submit-blog"
+  },
+  {
+    "url": "https://www.brownbook.net",
+    "name": "Brownbook",
+    "category": "business",
+    "submitPath": "/add-listing"
+  },
+  {
+    "url": "https://www.cipinet.com",
+    "name": "CipiNet",
+    "category": "general",
+    "submitPath": "/add-url"
+  },
+  {
+    "url": "https://www.dealerbaba.com",
+    "name": "DealerBaba",
+    "category": "b2b",
+    "submitPath": "/free-listing"
+  },
+  {
+    "url": "https://www.dirbull.com",
+    "name": "DirBull",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.directoryworld.net",
+    "name": "Directory World",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.dirjournal.com",
+    "name": "DirJournal",
+    "category": "general",
+    "submitPath": "/submit-url.html"
+  },
+  {
+    "url": "https://www.easydir.com",
+    "name": "EasyDir",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.elecdir.com",
+    "name": "ElecDir",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.entireweb.com",
+    "name": "Entireweb",
+    "category": "general",
+    "submitPath": "/free-submission"
+  },
+  {
+    "url": "https://www.europages.com",
+    "name": "Europages",
+    "category": "b2b",
+    "submitPath": "/registration"
+  },
+  {
+    "url": "https://www.expressbusinessdirectory.com",
+    "name": "Express Business Directory",
+    "category": "business",
+    "submitPath": "/Registration.aspx"
+  },
+  {
+    "url": "https://www.findelio.com",
+    "name": "Findelio",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.hotfrog.com",
+    "name": "Hotfrog",
+    "category": "business",
+    "submitPath": "/addYourBusiness"
+  },
+  {
+    "url": "https://www.hub.biz",
+    "name": "Hub.biz",
+    "category": "business",
+    "submitPath": "/add-listing"
+  },
+  {
+    "url": "https://www.jayde.com",
+    "name": "Jayde",
+    "category": "b2b",
+    "submitPath": "/submit.html"
+  },
+  {
+    "url": "https://www.linkcentre.com",
+    "name": "Link Centre",
+    "category": "general",
+    "submitPath": "/addurl.html"
+  },
+  {
+    "url": "https://www.merchantcircle.com",
+    "name": "MerchantCircle",
+    "category": "business",
+    "submitPath": "/signup"
+  },
+  {
+    "url": "https://www.nextbigwhat.com",
+    "name": "NextBigWhat",
+    "category": "tech",
+    "submitPath": "/submit"
+  },
+  {
+    "url": "https://www.one-sublime-directory.com",
+    "name": "One Sublime Directory",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.promotebusinessdirectory.com",
+    "name": "Promote Business Directory",
+    "category": "business",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.qalib.com",
+    "name": "Qalib",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.seodirectoryonline.org",
+    "name": "SEO Directory Online",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.sevenseek.com",
+    "name": "SevenSeek",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.sonicrun.com",
+    "name": "SonicRun",
+    "category": "general",
+    "submitPath": "/submit.html"
+  },
+  {
+    "url": "https://www.startlocal.com.au",
+    "name": "Start Local",
+    "category": "local",
+    "submitPath": "/add-listing"
+  },
+  {
+    "url": "https://www.submitlinkurl.com",
+    "name": "Submit Link URL",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.topofblogs.com",
+    "name": "Top of Blogs",
+    "category": "blog",
+    "submitPath": "/add-blog"
+  },
+  {
+    "url": "https://www.webworldindex.com",
+    "name": "Web World Index",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.yelp.com",
+    "name": "Yelp",
+    "category": "business",
+    "submitPath": "/signup"
+  },
+  {
+    "url": "https://www.yext.com",
+    "name": "Yext",
+    "category": "business",
+    "submitPath": "/free-scan"
+  },
+  {
+    "url": "https://foursquare.com",
+    "name": "Foursquare",
+    "category": "local",
+    "submitPath": "/signup"
+  },
+  {
+    "url": "https://www.indiamart.com",
+    "name": "IndiaMart",
+    "category": "b2b",
+    "submitPath": "/seller/registration"
+  },
+  {
+    "url": "https://www.tradekey.com",
+    "name": "TradeKey",
+    "category": "b2b",
+    "submitPath": "/register.htm"
+  },
+  {
+    "url": "https://www.tradeindia.com",
+    "name": "TradeIndia",
+    "category": "b2b",
+    "submitPath": "/free-listing.html"
+  },
+  {
+    "url": "https://www.exportersindia.com",
+    "name": "Exporters India",
+    "category": "b2b",
+    "submitPath": "/free-listing"
+  },
+  {
+    "url": "https://www.sulekha.com",
+    "name": "Sulekha",
+    "category": "local",
+    "submitPath": "/businesslisting"
+  },
+  {
+    "url": "https://www.searchenginereports.net",
+    "name": "Search Engine Reports",
+    "category": "general",
+    "submitPath": "/submit-url.html"
+  },
+  {
+    "url": "https://www.goguides.org",
+    "name": "GoGuides",
+    "category": "general",
+    "submitPath": "/submit"
+  },
+  {
+    "url": "https://dir.yahoo.com",
+    "name": "Yahoo Directory",
+    "category": "general",
+    "submitPath": "/submit"
+  },
+  {
+    "url": "https://www.linkpedia.net",
+    "name": "Linkpedia",
+    "category": "general",
+    "submitPath": "/submit.php"
+  },
+  {
+    "url": "https://www.iblocal.com",
+    "name": "IB Local",
+    "category": "local",
+    "submitPath": "/add-listing"
+  }
+]

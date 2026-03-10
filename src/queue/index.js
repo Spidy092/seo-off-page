@@ -15,6 +15,7 @@ const QUEUE_NAMES = {
     BROKEN_LINK: 'broken-link',
     OPPORTUNITY_CLASSIFIER: 'opportunity-classifier',
     COMMON_CRAWL_INGEST: 'common-crawl-ingest',
+    DIRECTORY_FINDER: 'directory-finder',
 };
 
 /**

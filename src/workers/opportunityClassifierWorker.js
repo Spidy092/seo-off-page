@@ -53,9 +53,19 @@ const OPPORTUNITY_PATTERNS = {
         keywords: [
             'directory', 'submit your site', 'add your site',
             'suggest a site', 'web directory', 'submit url',
-            'business directory', 'listing',
+            'business directory', 'listing', 'add listing',
+            'add your website', 'free directory', 'submit website',
+            'site submission', 'add your business', 'list your business',
         ],
         score: 40,
+    },
+    social_bookmarking: {
+        keywords: [
+            'bookmark', 'submit link', 'save to bookmarks', 'social bookmarking',
+            'add bookmark', 'bookmarking site', 'share link', 'submit story',
+            'save link', 'bookmark this page', 'social sharing',
+        ],
+        score: 35,
     },
     blog_mention: {
         keywords: [

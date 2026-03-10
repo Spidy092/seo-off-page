@@ -46,7 +46,7 @@ Return ONLY the valid JSON object. Do not include markdown formatting like \`\`\
     if (gemini) {
         try {
             const response = await gemini.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-2.0-flash',
                 contents: prompt,
                 config: {
                     responseMimeType: 'application/json',
@@ -64,7 +64,7 @@ Return ONLY the valid JSON object. Do not include markdown formatting like \`\`\
         try {
             const completion = await groq.chat.completions.create({
                 messages: [{ role: 'user', content: prompt }],
-                model: 'llama3-8b-8192',
+                model: 'llama-3.3-70b-versatile',
                 response_format: { type: 'json_object' }
             });
             return JSON.parse(completion.choices[0].message.content);
@@ -93,7 +93,7 @@ Return ONLY the valid JSON object. Do not include markdown formatting like \`\`\
         try {
             const completion = await sarvam.chat.completions.create({
                 messages: [{ role: 'user', content: prompt }],
-                model: 'sarvam-1', // Defaulting to sarvam-1
+                model: 'sarvam-m',
                 // Not all OpenAI endpoints support response_format strict json yet, so we omit and trust the prompt
             });
             const textContent = completion.choices[0].message.content;

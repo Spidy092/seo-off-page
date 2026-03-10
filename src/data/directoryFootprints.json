@@ -1,0 +1,41 @@
+{
+    "submissionPaths": [
+        "/submit-site",
+        "/add-listing",
+        "/add-business",
+        "/submit",
+        "/add-url",
+        "/list-your-business",
+        "/submit-listing",
+        "/submit-your-site",
+        "/add-website",
+        "/suggest-site",
+        "/submit-link",
+        "/add-link",
+        "/register-site",
+        "/submit-url",
+        "/free-listing",
+        "/add-your-site",
+        "/submit-your-url",
+        "/submit-website",
+        "/list-your-site",
+        "/add-your-website",
+        "/submit.php",
+        "/addurl.html",
+        "/submitlink.html",
+        "/add-my-site"
+    ],
+    "pageSignals": [
+        "submit your site",
+        "add your site",
+        "submit a link",
+        "add listing",
+        "free listing",
+        "submit url",
+        "add your business",
+        "list your business",
+        "suggest a site",
+        "register your site",
+        "add your website"
+    ]
+}

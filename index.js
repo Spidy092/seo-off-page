@@ -23,6 +23,7 @@ const { startDomainAnalyzerWorker } = require('./src/workers/domainAnalyzerWorke
 const { startEmailFinderWorker } = require('./src/workers/emailFinderWorker');
 const { startBrokenLinkWorker } = require('./src/workers/brokenLinkWorker');
 const { startOpportunityClassifierWorker } = require('./src/workers/opportunityClassifierWorker');
+const { startDirectoryFinderWorker } = require('./src/workers/directoryFinderWorker');
 
 const log = createLogger('server');
 
@@ -76,6 +77,7 @@ async function main() {
         startEmailFinderWorker(deps),
         startBrokenLinkWorker(deps),
         startOpportunityClassifierWorker(deps),
+        startDirectoryFinderWorker(deps),
     ];
     log.info({ count: workers.length }, '✅ Workers started');
 

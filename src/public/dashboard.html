@@ -537,6 +537,21 @@
             color: #4ade80;
         }
 
+        .badge-social_bookmarking {
+            background: rgba(251, 146, 60, 0.15);
+            color: #fb923c;
+        }
+
+        .badge-listicle {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+        }
+
+        .badge-blog_mention {
+            background: rgba(167, 139, 250, 0.15);
+            color: #a78bfa;
+        }
+
         .badge-new {
             background: var(--info-bg);
             color: var(--info);
@@ -785,12 +800,16 @@
             </div>
 
             <!-- ─── Campaign Selector ─── -->
-            <div style="margin-right: auto; margin-left: 2rem;">
+            <div style="margin-right: auto; margin-left: 2rem; display: flex; align-items: center; gap: 8px;">
                 <select id="campaignSelect" class="filter-select"
                     style="min-width: 250px; border-color: rgba(99, 102, 241, 0.5); background: rgba(13, 18, 36, 0.8);"
                     onchange="onCampaignChange()">
                     <option value="">All Campaigns (Global View)</option>
                 </select>
+                <button class="btn btn-secondary btn-sm" id="btnStopCampaign" onclick="stopCampaign()"
+                    style="padding: 6px 14px; font-size: 0.8rem; background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.4); color: #ef4444; display: none;">
+                    ⏹ Stop
+                </button>
             </div>
 
             <div class="navbar-status">
@@ -931,6 +950,9 @@
                         <option value="guest_post">Guest Post</option>
                         <option value="resource_page">Resource Page</option>
                         <option value="directory">Directory</option>
+                        <option value="social_bookmarking">Social Bookmarking</option>
+                        <option value="listicle">Listicle</option>
+                        <option value="blog_mention">Blog Mention</option>
                         <option value="forum">Forum</option>
                         <option value="niche_edit">Niche Edit</option>
                     </select>
@@ -1057,11 +1079,28 @@
 
         function onCampaignChange() {
             currentCampaignId = document.getElementById('campaignSelect').value;
+            document.getElementById('btnStopCampaign').style.display = currentCampaignId ? 'inline-flex' : 'none';
             refreshAll();
 
             const activeTab = document.querySelector('.tab.active').dataset.tab;
             if (activeTab === 'opportunities') loadOpportunities();
             if (activeTab === 'domains') loadDomains();
+        }
+
+        async function stopCampaign() {
+            if (!currentCampaignId) return;
+            const name = document.getElementById('campaignSelect').selectedOptions[0]?.text || currentCampaignId;
+            if (!confirm(`Stop campaign "${name}"? This will remove all pending jobs for this campaign.`)) return;
+
+            try {
+                const res = await fetch(API + '/api/pipeline/stop/' + currentCampaignId, { method: 'POST' });
+                const data = await res.json();
+                showAlert('success', `Campaign stopped. ${data.jobsRemoved} pending jobs removed.`);
+                await loadCampaigns();
+                refreshAll();
+            } catch (err) {
+                showAlert('error', 'Failed to stop campaign: ' + err.message);
+            }
         }
 
         // ─── Tab Switching ───

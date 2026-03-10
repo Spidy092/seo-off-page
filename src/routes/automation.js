@@ -61,12 +61,64 @@ async function automationRoutes(fastify, deps) {
             { jobId: `competitor-${campaign.id}-${normalized}-${Date.now()}` }
         );
 
+        // Enqueue directory & bookmarking discovery
+        if (queues.DIRECTORY_FINDER) {
+            await queues.DIRECTORY_FINDER.add(
+                'discover-directories',
+                { campaignId: campaign.id, keywords },
+                { jobId: `dirfind-${campaign.id}-${Date.now()}` }
+            );
+        }
+
         return reply.code(202).send({
             message: 'Pipeline started',
             campaignId: campaign.id,
             targetDomain: normalized,
             keywords,
             jobId: job.id,
+        });
+    });
+
+    // ═════════════════════════════════════
+    //  Stop Campaign
+    // ═════════════════════════════════════
+
+    /**
+     * POST /api/pipeline/stop/:campaignId
+     * Drains all queued/delayed jobs for a specific campaign and marks it stopped.
+     */
+    fastify.post('/api/pipeline/stop/:campaignId', async (req, reply) => {
+        const campaignId = parseInt(req.params.campaignId);
+        if (!campaignId) return reply.code(400).send({ error: 'Invalid campaignId' });
+
+        let totalRemoved = 0;
+
+        for (const [key, queue] of Object.entries(queues)) {
+            try {
+                // Remove waiting jobs for this campaign
+                const waiting = await queue.getJobs(['waiting', 'delayed']);
+                for (const job of waiting) {
+                    if (job.data?.campaignId === campaignId) {
+                        await job.remove();
+                        totalRemoved++;
+                    }
+                }
+            } catch (err) {
+                // Some jobs may already be active/locked — skip them
+            }
+        }
+
+        // Mark campaign as stopped in DB
+        try {
+            await db.query(
+                "UPDATE campaigns SET status = 'stopped', completed_at = NOW() WHERE id = $1",
+                [campaignId]
+            );
+        } catch { /* ignore */ }
+
+        return reply.send({
+            message: `Campaign ${campaignId} stopped`,
+            jobsRemoved: totalRemoved,
         });
     });
 
