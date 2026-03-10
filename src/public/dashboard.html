@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Automation Engine — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2035;
+            --bg-card-hover: #1f2847;
+            --bg-input: #0d1224;
+            --border: #2a3352;
+            --border-focus: #6366f1;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --accent-glow: rgba(99, 102, 241, 0.3);
+            --success: #22c55e;
+            --success-bg: rgba(34, 197, 94, 0.1);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.1);
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.1);
+            --info: #3b82f6;
+            --info-bg: rgba(59, 130, 246, 0.1);
+            --gradient-1: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
+            --gradient-2: linear-gradient(135deg, #06b6d4, #3b82f6);
+            --gradient-3: linear-gradient(135deg, #22c55e, #06b6d4);
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 20px var(--accent-glow);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ─── Background Animation ─── */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(6, 182, 212, 0.04) 0%, transparent 50%);
+            z-index: 0;
+            animation: bgShift 20s ease-in-out infinite;
+        }
+
+        @keyframes bgShift {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(-2%, -2%);
+            }
+        }
+
+        /* ─── Layout ─── */
+        .app {
+            position: relative;
+            z-index: 1;
+        }
+
+        .navbar {
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .navbar-brand .icon {
+            background: var(--gradient-1);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .navbar-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.offline {
+            background: var(--danger);
+            animation: none;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ─── Tabs ─── */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 4px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            text-align: center;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+            border: none;
+            background: none;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-card);
+        }
+
+        .tab.active {
+            background: var(--accent);
+            color: white;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ─── Cards ─── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title .emoji {
+            font-size: 1.2rem;
+        }
+
+        /* ─── Stats Grid ─── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .stat-card:nth-child(1)::before {
+            background: var(--gradient-1);
+        }
+
+        .stat-card:nth-child(2)::before {
+            background: var(--gradient-2);
+        }
+
+        .stat-card:nth-child(3)::before {
+            background: var(--gradient-3);
+        }
+
+        .stat-card:nth-child(4)::before {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+        }
+
+        .stat-card:nth-child(5)::before {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        }
+
+        .stat-card:nth-child(6)::before {
+            background: linear-gradient(135deg, #14b8a6, #22c55e);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ─── Form ─── */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.35rem;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-glow), var(--shadow-lg);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        /* ─── Alerts ─── */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.3s;
+        }
+
+        .alert.show {
+            display: flex;
+        }
+
+        .alert-success {
+            background: var(--success-bg);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: var(--success);
+        }
+
+        .alert-error {
+            background: var(--danger-bg);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+        }
+
+        .alert-info {
+            background: var(--info-bg);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: var(--info);
+        }
+
+        /* ─── Tables ─── */
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead {
+            background: var(--bg-secondary);
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        tr:hover td {
+            background: var(--bg-card-hover);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state .emoji {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* ─── Badges ─── */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .badge-guest_post {
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+        }
+
+        .badge-resource_page {
+            background: rgba(6, 182, 212, 0.15);
+            color: #22d3ee;
+        }
+
+        .badge-directory {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+        }
+
+        .badge-forum {
+            background: rgba(236, 72, 153, 0.15);
+            color: #f472b6;
+        }
+
+        .badge-niche_edit {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+        }
+
+        .badge-new {
+            background: var(--info-bg);
+            color: var(--info);
+        }
+
+        .badge-contacted {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .badge-converted {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        /* ─── Score Bar ─── */
+        .score-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .score-track {
+            flex: 1;
+            max-width: 80px;
+            height: 6px;
+            background: var(--bg-input);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.6s ease;
+        }
+
+        .score-high .score-fill {
+            background: var(--success);
+        }
+
+        .score-mid .score-fill {
+            background: var(--warning);
+        }
+
+        .score-low .score-fill {
+            background: var(--danger);
+        }
+
+        /* ─── Queue Cards ─── */
+        .queue-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .queue-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            transition: all 0.3s;
+        }
+
+        .queue-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .queue-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .queue-stats {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .queue-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 50px;
+        }
+
+        .queue-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .queue-stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* ─── Filters ─── */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            border-color: var(--border-focus);
+        }
+
+        .filter-select option {
+            background: var(--bg-secondary);
+        }
+
+        /* ─── Spinner ─── */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .navbar {
+                padding: 0 1rem;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+        }
+
+        /* ─── Export Button Group ─── */
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .header-actions h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .export-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ─── Auto-refresh toggle ─── */
+        .toggle-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .toggle {
+            position: relative;
+            width: 40px;
+            height: 22px;
+        }
+
+        .toggle input {
+            display: none;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            left: 2px;
+            top: 2px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle input:checked+.toggle-slider {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .toggle input:checked+.toggle-slider::before {
+            transform: translateX(18px);
+            background: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <!-- ─── Navbar ─── -->
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <div class="icon">🔗</div>
+                <span>SEO Automation Engine</span>
+            </div>
+
+            <!-- ─── Campaign Selector ─── -->
+            <div style="margin-right: auto; margin-left: 2rem;">
+                <select id="campaignSelect" class="filter-select"
+                    style="min-width: 250px; border-color: rgba(99, 102, 241, 0.5); background: rgba(13, 18, 36, 0.8);"
+                    onchange="onCampaignChange()">
+                    <option value="">All Campaigns (Global View)</option>
+                </select>
+            </div>
+
+            <div class="navbar-status">
+                <div class="status-dot" id="healthDot"></div>
+                <span id="healthText">Checking...</span>
+                <div class="toggle-wrapper" style="margin-left: 16px;">
+                    <label class="toggle">
+                        <input type="checkbox" id="autoRefresh" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span>Auto-refresh</span>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <!-- ─── Stats Row ─── -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-label">Domains Found</div>
+                    <div class="stat-value" id="statDomains">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Backlinks</div>
+                    <div class="stat-value" id="statBacklinks">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Opportunities</div>
+                    <div class="stat-value" id="statOpportunities">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Contacts</div>
+                    <div class="stat-value" id="statContacts">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Broken Links</div>
+                    <div class="stat-value" id="statBrokenLinks">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Jobs</div>
+                    <div class="stat-value" id="statActiveJobs">—</div>
+                </div>
+            </div>
+
+            <!-- ─── Tabs ─── -->
+            <div class="tabs">
+                <button class="tab active" data-tab="pipeline" id="tabPipeline">🚀 Start Pipeline</button>
+                <button class="tab" data-tab="opportunities" id="tabOpportunities">💎 Opportunities</button>
+                <button class="tab" data-tab="domains" id="tabDomains">🌐 Domains</button>
+                <button class="tab" data-tab="queues" id="tabQueues">📊 Queues</button>
+            </div>
+
+            <!-- ─── Tab: Start Pipeline ─── -->
+            <div class="tab-content active" id="contentPipeline">
+                <div class="card" style="max-width: 700px;">
+                    <div class="card-title"><span class="emoji">🚀</span> Start New Pipeline</div>
+
+                    <div id="alertSuccess" class="alert alert-success">
+                        <span>✅</span>
+                        <span id="alertSuccessText">Pipeline started successfully!</span>
+                    </div>
+                    <div id="alertError" class="alert alert-error">
+                        <span>❌</span>
+                        <span id="alertErrorText">Something went wrong.</span>
+                    </div>
+
+                    <form id="pipelineForm">
+                        <div class="form-group">
+                            <label class="form-label">Target Domain</label>
+                            <input type="text" class="form-input" id="targetDomain" placeholder="e.g. myblog.com"
+                                required>
+                            <p class="form-hint">Your website domain — the site you want backlinks for. Don't include
+                                https:// or www.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <label class="form-label" style="margin-bottom: 0;">Keywords</label>
+                                <button type="button" class="btn btn-secondary btn-sm" id="btnAutoGenerate"
+                                    style="padding: 4px 10px; font-size: 0.75rem;">
+                                    ✨ Auto-Generate
+                                    <div class="spinner" id="btnAutoSpinner"
+                                        style="display:none; width:12px; height:12px; border-width:2px;"></div>
+                                </button>
+                            </div>
+                            <textarea class="form-textarea" id="keywords"
+                                placeholder="seo tools&#10;link building&#10;backlink checker" required></textarea>
+                            <p class="form-hint">One keyword per line. These are the search terms your audience uses on
+                                Google. Use 3-10 keywords for best results.</p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="btnStart">
+                            <span id="btnStartText">🚀 Start Pipeline</span>
+                            <div class="spinner" id="btnSpinner" style="display:none;"></div>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Recent Pipelines -->
+                <div class="card">
+                    <div class="card-title"><span class="emoji">📜</span> Recently Discovered Competitors</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Domain</th>
+                                    <th>Quality Score</th>
+                                    <th>Competitor</th>
+                                    <th>First Seen</th>
+                                </tr>
+                            </thead>
+                            <tbody id="competitorsTable">
+                                <tr>
+                                    <td colspan="4" class="empty-state">
+                                        <div class="emoji">🔍</div>Start a pipeline to discover competitors
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Tab: Opportunities ─── -->
+            <div class="tab-content" id="contentOpportunities">
+                <div class="header-actions">
+                    <h2>💎 Link Opportunities</h2>
+                    <div class="export-btns">
+                        <button class="btn btn-secondary btn-sm" onclick="exportData('csv')">📥 Export CSV</button>
+                        <button class="btn btn-secondary btn-sm" onclick="exportData('json')">📥 Export JSON</button>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <select class="filter-select" id="filterType" onchange="loadOpportunities()">
+                        <option value="">All Types</option>
+                        <option value="guest_post">Guest Post</option>
+                        <option value="resource_page">Resource Page</option>
+                        <option value="directory">Directory</option>
+                        <option value="forum">Forum</option>
+                        <option value="niche_edit">Niche Edit</option>
+                    </select>
+                    <select class="filter-select" id="filterMinScore" onchange="loadOpportunities()">
+                        <option value="0">Min Score: Any</option>
+                        <option value="30">Min Score: 30+</option>
+                        <option value="50" selected>Min Score: 50+</option>
+                        <option value="70">Min Score: 70+</option>
+                        <option value="80">Min Score: 80+</option>
+                    </select>
+                    <select class="filter-select" id="filterStatus" onchange="loadOpportunities()">
+                        <option value="new">Status: New</option>
+                        <option value="">All Statuses</option>
+                        <option value="contacted">Contacted</option>
+                        <option value="replied">Replied</option>
+                        <option value="converted">Converted</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Domain</th>
+                                <th>Page URL</th>
+                                <th>Type</th>
+                                <th>Score</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="opportunitiesTable">
+                            <tr>
+                                <td colspan="6" class="empty-state">
+                                    <div class="emoji">💎</div>No opportunities found yet. Start a pipeline first!
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ─── Tab: Domains ─── -->
+            <div class="tab-content" id="contentDomains">
+                <div class="header-actions">
+                    <h2>🌐 Discovered Domains</h2>
+                    <div class="filters" style="margin-bottom:0;">
+                        <select class="filter-select" id="filterDomainScore" onchange="loadDomains()">
+                            <option value="0">Min Score: Any</option>
+                            <option value="30">Score: 30+</option>
+                            <option value="50">Score: 50+</option>
+                            <option value="70">Score: 70+</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Domain</th>
+                                <th>Quality Score</th>
+                                <th>PageRank</th>
+                                <th>Tranco Rank</th>
+                                <th>Age (days)</th>
+                                <th>Competitor?</th>
+                            </tr>
+                        </thead>
+                        <tbody id="domainsTable">
+                            <tr>
+                                <td colspan="6" class="empty-state">
+                                    <div class="emoji">🌐</div>No domains discovered yet
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ─── Tab: Queues ─── -->
+            <div class="tab-content" id="contentQueues">
+                <h2 style="margin-bottom: 1rem;">📊 Queue Status</h2>
+                <div class="queue-grid" id="queueGrid">
+                    <div class="empty-state">
+                        <div class="emoji">📊</div>Loading queue data...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ─── API Base ───
+        const API = '';
+
+        // ─── State ───
+        let autoRefreshInterval = null;
+        let opportunitiesData = [];
+        let currentCampaignId = '';
+
+        // ─── Campaigns ───
+        async function loadCampaigns() {
+            try {
+                const res = await fetch(API + '/api/campaigns');
+                const campaigns = await res.json();
+                const select = document.getElementById('campaignSelect');
+                const val = select.value;
+
+                let html = '<option value="">All Campaigns (Global View)</option>';
+                for (const c of campaigns) {
+                    const date = new Date(c.created_at).toLocaleDateString();
+                    html += `<option value="${c.id}">${esc(c.target_domain)} (${date})</option>`;
+                }
+                select.innerHTML = html;
+
+                // Restore selection if it still exists
+                if (val && [...select.options].some(o => o.value == val)) {
+                    select.value = val;
+                }
+            } catch (err) {
+                console.error('Campaigns error:', err);
+            }
+        }
+
+        function onCampaignChange() {
+            currentCampaignId = document.getElementById('campaignSelect').value;
+            refreshAll();
+
+            const activeTab = document.querySelector('.tab.active').dataset.tab;
+            if (activeTab === 'opportunities') loadOpportunities();
+            if (activeTab === 'domains') loadDomains();
+        }
+
+        // ─── Tab Switching ───
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('content' + capitalize(tab.dataset.tab)).classList.add('active');
+
+                // Load data for the active tab
+                if (tab.dataset.tab === 'opportunities') loadOpportunities();
+                if (tab.dataset.tab === 'domains') loadDomains();
+                if (tab.dataset.tab === 'queues') loadQueues();
+            });
+        });
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // ─── Pipeline Form ───
+        document.getElementById('pipelineForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const domain = document.getElementById('targetDomain').value.trim()
+                .replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/+$/, '');
+            const kwText = document.getElementById('keywords').value.trim();
+            const keywords = kwText.split('\n').map(k => k.trim()).filter(k => k.length > 0);
+
+            if (!domain || keywords.length === 0) return;
+
+            const btn = document.getElementById('btnStart');
+            const btnText = document.getElementById('btnStartText');
+            const spinner = document.getElementById('btnSpinner');
+
+            btn.disabled = true;
+            btnText.textContent = 'Starting...';
+            spinner.style.display = 'block';
+            hideAlerts();
+
+            try {
+                const res = await fetch(API + '/api/pipeline/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ targetDomain: domain, keywords })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    showAlert('success', `Pipeline started for "${domain}"! Switched to new campaign view.`);
+                    document.getElementById('targetDomain').value = '';
+                    document.getElementById('keywords').value = '';
+
+                    // Auto-switch to new campaign
+                    await loadCampaigns();
+                    if (data.campaignId) {
+                        document.getElementById('campaignSelect').value = data.campaignId;
+                        currentCampaignId = data.campaignId;
+                    }
+                    refreshAll();
+                } else {
+                    showAlert('error', data.error || data.message || 'Failed to start pipeline');
+                }
+            } catch (err) {
+                showAlert('error', 'Could not connect to server: ' + err.message);
+            }
+
+            btn.disabled = false;
+            btnText.textContent = '🚀 Start Pipeline';
+            spinner.style.display = 'none';
+        });
+
+        // ─── Auto-Generate Keywords ───
+        document.getElementById('btnAutoGenerate').addEventListener('click', async () => {
+            const domainInput = document.getElementById('targetDomain').value.trim();
+            const domain = domainInput.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/+$/, '');
+
+            if (!domain) {
+                showAlert('error', 'Please enter a Target Domain first to extract keywords.');
+                document.getElementById('targetDomain').focus();
+                return;
+            }
+
+            const btn = document.getElementById('btnAutoGenerate');
+            const spinner = document.getElementById('btnAutoSpinner');
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            try {
+                const res = await fetch(API + `/api/tools/extract-keywords?domain=${encodeURIComponent(domain)}`);
+                const data = await res.json();
+
+                if (data.keywords && data.keywords.length > 0) {
+                    document.getElementById('keywords').value = data.keywords.join('\n');
+                    showAlert('success', `Extracted ${data.keywords.length} keywords from ${domain}`);
+                } else {
+                    showAlert('info', 'Could not find clear keywords. Please enter them manually.');
+                }
+            } catch (err) {
+                showAlert('error', 'Failed to extract keywords: ' + err.message);
+            }
+
+            btn.disabled = false;
+            spinner.style.display = 'none';
+        });
+
+        function showAlert(type, msg) {
+            hideAlerts();
+            const el = document.getElementById('alert' + capitalize(type));
+            document.getElementById('alert' + capitalize(type) + 'Text').textContent = msg;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 10000);
+        }
+        function hideAlerts() {
+            document.querySelectorAll('.alert').forEach(a => a.classList.remove('show'));
+        }
+
+        // ─── Load Stats ───
+        async function loadStats() {
+            try {
+                let pipeUrl = API + '/stats/pipeline';
+                if (currentCampaignId) pipeUrl += `?campaignId=${currentCampaignId}`;
+
+                const [pipeRes, queueRes] = await Promise.all([
+                    fetch(pipeUrl),
+                    fetch(API + '/stats/queues')
+                ]);
+                const pipeline = await pipeRes.json();
+                const queues = await queueRes.json();
+
+                document.getElementById('statDomains').textContent = pipeline.totalDomains || 0;
+                document.getElementById('statBacklinks').textContent = pipeline.totalBacklinks || 0;
+
+                const oppTotal = pipeline.opportunities
+                    ? Object.values(pipeline.opportunities).reduce((s, v) => s + v, 0)
+                    : 0;
+                document.getElementById('statOpportunities').textContent = oppTotal;
+                document.getElementById('statContacts').textContent = pipeline.totalContacts || 0;
+                document.getElementById('statBrokenLinks').textContent = pipeline.totalBrokenLinks || 0;
+
+                let activeJobs = 0;
+                for (const q of Object.values(queues)) {
+                    activeJobs += (q.active || 0) + (q.waiting || 0) + (q.delayed || 0);
+                }
+                document.getElementById('statActiveJobs').textContent = activeJobs;
+
+            } catch (err) {
+                console.error('Stats error:', err);
+            }
+        }
+
+        // ─── Load Health ───
+        async function loadHealth() {
+            try {
+                const res = await fetch(API + '/health');
+                const data = await res.json();
+                const dot = document.getElementById('healthDot');
+                const text = document.getElementById('healthText');
+                if (data.status === 'ok') {
+                    dot.className = 'status-dot';
+                    text.textContent = 'System Online';
+                } else {
+                    dot.className = 'status-dot offline';
+                    text.textContent = 'Degraded';
+                }
+            } catch {
+                document.getElementById('healthDot').className = 'status-dot offline';
+                document.getElementById('healthText').textContent = 'Offline';
+            }
+        }
+
+        // ─── Load Opportunities ───
+        async function loadOpportunities() {
+            const type = document.getElementById('filterType').value;
+            const minScore = document.getElementById('filterMinScore').value;
+            const status = document.getElementById('filterStatus').value;
+
+            let url = API + `/api/opportunities?limit=200&minScore=${minScore}`;
+            if (type) url += `&type=${type}`;
+            if (status) url += `&status=${status}`;
+            if (currentCampaignId) url += `&campaignId=${currentCampaignId}`;
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                opportunitiesData = data;
+
+                const tbody = document.getElementById('opportunitiesTable');
+                if (!data.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="emoji">💎</div>No opportunities match your filters. Try lowering the minimum score.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.map(o => `
+                    <tr>
+                        <td><strong>${esc(o.domain)}</strong></td>
+                        <td><a href="${esc(o.page_url)}" target="_blank" style="color:var(--accent);text-decoration:none;">${truncate(o.page_url, 40)}</a></td>
+                        <td><span class="badge badge-${o.opportunity_type || 'new'}">${esc(o.opportunity_type || '—')}</span></td>
+                        <td>${scoreHtml(o.score)}</td>
+                        <td>${o.contact_email ? `<a href="mailto:${esc(o.contact_email)}" style="color:var(--accent);">${esc(o.contact_email)}</a>` : '<span style="color:var(--text-muted)">—</span>'}</td>
+                        <td><span class="badge badge-${o.status || 'new'}">${esc(o.status || 'new')}</span></td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Opportunities error:', err);
+            }
+        }
+
+        // ─── Load Domains ───
+        async function loadDomains() {
+            const minScore = document.getElementById('filterDomainScore').value;
+            let url = API + `/api/domains?limit=200&minScore=${minScore}`;
+            if (currentCampaignId) url += `&campaignId=${currentCampaignId}`;
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                const tbody = document.getElementById('domainsTable');
+
+                if (!data.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="emoji">🌐</div>No domains found matching your filter</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.map(d => `
+                    <tr>
+                        <td><strong>${esc(d.domain || d.normalized)}</strong></td>
+                        <td>${scoreHtml(d.quality_score)}</td>
+                        <td>${d.page_rank !== null ? d.page_rank : '<span style="color:var(--text-muted)">—</span>'}</td>
+                        <td>${d.tranco_rank !== null ? d.tranco_rank.toLocaleString() : '<span style="color:var(--text-muted)">—</span>'}</td>
+                        <td>${d.whois_age_days !== null ? d.whois_age_days.toLocaleString() : '<span style="color:var(--text-muted)">—</span>'}</td>
+                        <td>${d.is_competitor ? '<span class="badge badge-guest_post">Yes</span>' : ''}</td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Domains error:', err);
+            }
+        }
+
+        // ─── Load Competitors ───
+        async function loadCompetitors() {
+            try {
+                const res = await fetch(API + `/api/domains?limit=50&minScore=0`);
+                const data = await res.json();
+                const competitors = data.filter(d => d.is_competitor);
+
+                const tbody = document.getElementById('competitorsTable');
+                if (!competitors.length) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty-state"><div class="emoji">🔍</div>Start a pipeline to discover competitors</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = competitors.map(d => `
+                    <tr>
+                        <td><strong>${esc(d.domain || d.normalized)}</strong></td>
+                        <td>${scoreHtml(d.quality_score)}</td>
+                        <td><span class="badge badge-guest_post">Competitor</span></td>
+                        <td>${new Date(d.first_seen).toLocaleDateString()}</td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Competitors error:', err);
+            }
+        }
+
+        // ─── Load Queues ───
+        async function loadQueues() {
+            try {
+                const res = await fetch(API + '/stats/queues');
+                const data = await res.json();
+                const grid = document.getElementById('queueGrid');
+
+                const queueNames = {
+                    COMPETITOR_DISCOVERY: { label: 'Competitor Discovery', icon: '🔍' },
+                    BACKLINK_EXTRACTION: { label: 'Backlink Extraction', icon: '🔗' },
+                    DOMAIN_ANALYSIS: { label: 'Domain Analysis', icon: '📊' },
+                    EMAIL_FINDER: { label: 'Email Finder', icon: '📧' },
+                    BROKEN_LINK: { label: 'Broken Links', icon: '🔨' },
+                    OPPORTUNITY_CLASSIFIER: { label: 'Classifier', icon: '🏷️' },
+                    COMMON_CRAWL_INGEST: { label: 'Common Crawl', icon: '🌐' },
+                };
+
+                grid.innerHTML = Object.entries(data).map(([key, q]) => {
+                    const info = queueNames[key] || { label: key, icon: '📦' };
+                    return `
+                        <div class="queue-card">
+                            <div class="queue-name">${info.icon} ${info.label}</div>
+                            <div class="queue-stats">
+                                <div class="queue-stat">
+                                    <div class="queue-stat-value" style="color:var(--info)">${q.active || 0}</div>
+                                    <div class="queue-stat-label">Active</div>
+                                </div>
+                                <div class="queue-stat">
+                                    <div class="queue-stat-value" style="color:var(--warning)">${q.waiting || 0}</div>
+                                    <div class="queue-stat-label">Waiting</div>
+                                </div>
+                                <div class="queue-stat">
+                                    <div class="queue-stat-value" style="color:var(--success)">${q.completed || 0}</div>
+                                    <div class="queue-stat-label">Done</div>
+                                </div>
+                                <div class="queue-stat">
+                                    <div class="queue-stat-value" style="color:var(--danger)">${q.failed || 0}</div>
+                                    <div class="queue-stat-label">Failed</div>
+                                </div>
+                                <div class="queue-stat">
+                                    <div class="queue-stat-value" style="color:var(--text-muted)">${q.delayed || 0}</div>
+                                    <div class="queue-stat-label">Delayed</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error('Queue error:', err);
+            }
+        }
+
+        // ─── Export ───
+        function exportData(format) {
+            if (!opportunitiesData.length) {
+                alert('No data to export. Load opportunities first!');
+                return;
+            }
+            let content, mime, ext;
+            if (format === 'json') {
+                content = JSON.stringify(opportunitiesData, null, 2);
+                mime = 'application/json';
+                ext = 'json';
+            } else {
+                const headers = ['domain', 'page_url', 'opportunity_type', 'score', 'contact_email', 'status'];
+                const rows = opportunitiesData.map(o => headers.map(h => `"${(o[h] || '').toString().replace(/"/g, '""')}"`).join(','));
+                content = headers.join(',') + '\n' + rows.join('\n');
+                mime = 'text/csv';
+                ext = 'csv';
+            }
+            const blob = new Blob([content], { type: mime });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `seo-opportunities-${new Date().toISOString().slice(0, 10)}.${ext}`;
+            a.click();
+        }
+
+        // ─── Helpers ───
+        function esc(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+        function truncate(str, len) {
+            if (!str) return '';
+            return str.length > len ? esc(str.slice(0, len)) + '…' : esc(str);
+        }
+        function scoreHtml(score) {
+            const s = Math.round(score || 0);
+            const cls = s >= 60 ? 'score-high' : s >= 40 ? 'score-mid' : 'score-low';
+            return `<div class="score-bar ${cls}"><span>${s}</span><div class="score-track"><div class="score-fill" style="width:${s}%"></div></div></div>`;
+        }
+
+        // ─── Init + Auto Refresh ───
+        async function refreshAll() {
+            await Promise.all([loadHealth(), loadStats(), loadCompetitors(), loadCampaigns()]);
+        }
+
+        refreshAll();
+
+        document.getElementById('autoRefresh').addEventListener('change', (e) => {
+            if (e.target.checked) {
+                autoRefreshInterval = setInterval(refreshAll, 5000);
+            } else {
+                clearInterval(autoRefreshInterval);
+            }
+        });
+        autoRefreshInterval = setInterval(refreshAll, 5000);
+    </script>
+</body>
+
+</html>
