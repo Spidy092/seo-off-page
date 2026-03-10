@@ -63,10 +63,13 @@ Here is the exact technical execution sequence:
     *   **Forum / Niche Edit:** Default fallbacks.
 *   **Output:** Calculates a final Opportunity Score combining the classification intent with the domain quality. High-scoring opportunities (e.g., Score > 50) are queued for email discovery.
 
-### Phase E: Broken Link Detection (The `brokenLinkWorker.js`)
+### Phase E: Broken Link Detection (The `brokenLinkWorker.js` — Powered by Linkinator)
 *   **Objective:** Execute the highest-conversion outreach strategy known in SEO: Broken Link Building.
-*   **Mechanism:** This worker specifically analyzes pages classified as "Resource Pages".
-*   **Logic:** It extracts all outbound links on the resource page and performs HTTP `HEAD` requests to each one. If a link returns an HTTP `404 Not Found`, `410 Gone`, or a connection error, it flags the link as dead.
+*   **Mechanism:** Uses a **hybrid approach** combining Cheerio and [Linkinator](https://github.com/JustinBeckwith/linkinator) for production-grade link validation:
+    1.  **Cheerio Pre-pass:** Fetches the resource page and builds an anchor-text map (`url → anchor text`) so outreach emails can reference the exact link text.
+    2.  **Linkinator Scan:** Validates every link on the page using Linkinator's concurrent checker. This handles HTTP 429 `Retry-After` headers, automatic retries on 5xx errors with jitter, redirect-loop detection, and bot-protection edge cases — problems that raw `axios.head()` calls frequently get wrong.
+    3.  **External Filter:** Only keeps broken links pointing to *other* domains (not internal links), and merges the anchor text from step 1.
+*   **Why this is better than manual HEAD requests:** Fewer false positives (servers that block bots won't incorrectly flag working links as broken), automatic retry logic, and significantly faster parallel checking (25-way concurrency).
 *   **Output:** Saves the data in the `broken_links` table. The user can now email the site owner saying: "You have a broken link on your page; replace it with my working link."
 
 ### Phase F: Email Discovery & Contact Parsing (The `emailFinderWorker.js`)
@@ -112,6 +115,20 @@ The final value of this machine is the database view it generates. When the pipe
 *   `[Domain Quality Score]` (Verification that the site is highly authoritative)
 *   `[Contact Email]` (Exactly who to email)
 
+
 The user exports this directly into tools like Instantly.ai or Lemlist. Because the `Opportunity Type` is known, the user can write dynamic email templates. (e.g., *"Hi, I saw your site is accepting guest posts..."* vs *"Hi, I found a broken link on your resources page..."*). 
+
+---
+
+## 5. Dashboard Metrics & Terminology Explained
+
+The frontend dashboard provides a real-time view of the engine's extraction process. Here is exactly what those top-level metrics mean:
+
+1. **Domains Found:** The total number of unique website domains the system has discovered, either as direct competitors or as sites that link to competitors. Every domain here is queued for the Quality Analysis phase (Tranco/OpenPageRank scoring).
+2. **Backlinks:** The total raw count of verified, active outbound links pointing to your competitors. This includes every link found via SERP mining, crawling, or the Common Crawl database. This is the "raw ore" before filtering.
+3. **Opportunities:** The highly refined, actionable subset of data. An "Opportunity" is created only when a domain passes the quality threshold (high Domain Authority) **and** the AI text classifier successfully identifies *how* you can get a link from them (e.g., categorizing it as a Guest Post, Resource Page, or Directory). These are the rows you actually export and email.
+4. **Contacts:** The total number of verified, human email addresses the engine has successfully located for your "Opportunities." These are found by actively scraping the target's `/contact` pages or by pinging the Hunter.io/Snov.io APIs.
+5. **Broken Links:** The number of dead/404 out-bound links the engine discovered while crawling a target's resource page. Each broken link is a highly-converting excuse to email the site owner.
+6. **Active Jobs:** The real-time pulse of the BullMQ/Redis background queue. This shows exactly how many concurrent scrapers, AI analyzers, and email finders are currently executing tasks in the background on your server.
 
 **Conclusion:** You have built an end-to-end, highly scalable, cost-free SEO prospecting machine. It is a brilliant orchestration of APIs, web scraping, and queuing logic tailored to solve the most tedious task in digital marketing.

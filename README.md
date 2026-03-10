@@ -90,16 +90,17 @@ External Data Sources:
 
 ## 🛠 Tech Stack
 
-| Component         | Technology                                                   | Purpose                                |
-| ----------------- | ------------------------------------------------------------ | -------------------------------------- |
-| **API Server**    | [Fastify](https://fastify.dev/)                              | High-performance HTTP server           |
-| **Queue System**  | [BullMQ](https://bullmq.io/) + [Redis](https://redis.io/)    | Job queuing, retries, rate limiting    |
-| **Database**      | [PostgreSQL](https://www.postgresql.org/)                    | Persistent storage for all data        |
-| **HTTP Client**   | [Axios](https://axios-http.com/)                             | Web requests and API calls             |
-| **HTML Parser**   | [Cheerio](https://cheerio.js.org/)                           | Server-side HTML parsing (jQuery-like) |
-| **Logger**        | [Pino](https://getpino.io/)                                  | High-performance structured logging    |
-| **Deduplication** | [bloom-filters](https://www.npmjs.com/package/bloom-filters) | Memory-efficient probabilistic dedup   |
-| **Runtime**       | [Node.js](https://nodejs.org/)                               | Server-side JavaScript                 |
+| Component          | Technology                                                   | Purpose                                |
+| ------------------ | ------------------------------------------------------------ | -------------------------------------- |
+| **API Server**     | [Fastify](https://fastify.dev/)                              | High-performance HTTP server           |
+| **Queue System**   | [BullMQ](https://bullmq.io/) + [Redis](https://redis.io/)    | Job queuing, retries, rate limiting    |
+| **Database**       | [PostgreSQL](https://www.postgresql.org/)                    | Persistent storage for all data        |
+| **HTTP Client**    | [Axios](https://axios-http.com/)                             | Web requests and API calls             |
+| **HTML Parser**    | [Cheerio](https://cheerio.js.org/)                           | Server-side HTML parsing (jQuery-like) |
+| **Link Validator** | [Linkinator](https://github.com/JustinBeckwith/linkinator)   | Production-grade broken link detection |
+| **Logger**         | [Pino](https://getpino.io/)                                  | High-performance structured logging    |
+| **Deduplication**  | [bloom-filters](https://www.npmjs.com/package/bloom-filters) | Memory-efficient probabilistic dedup   |
+| **Runtime**        | [Node.js](https://nodejs.org/)                               | Server-side JavaScript                 |
 
 All dependencies are **open-source** and **free**.
 
@@ -567,13 +568,21 @@ Calculates a composite quality score (0-100) from:
 
 **Optimization:** If scraping (Step 1) finds ≥2 emails, API steps are skipped to save quota.
 
-### 5. Broken Link Worker
+### 5. Broken Link Worker (Hybrid — Linkinator + Cheerio)
 
 **Queue:** `broken-link`  
 **Concurrency:** 2  
 **Input:** `{ pageUrl, sourceDomain }`
 
-Crawls a page, extracts all outbound links, and sends HTTP HEAD requests to check each one. Links returning `404`, `410`, `521` or connection errors (`ECONNREFUSED`, `ENOTFOUND`) are stored as broken link opportunities.
+Uses a hybrid approach for maximum accuracy and reliability:
+
+1. **Cheerio Pre-pass** — Fetches the page and builds an anchor-text map (`url → anchor text`) for outreach context.
+2. **Linkinator Scan** — Validates all links on the page using [Linkinator](https://github.com/JustinBeckwith/linkinator), which provides production-grade HTTP checking with automatic `Retry-After` (429) handling, 5xx retry with jitter, redirect-loop detection, and 25-way concurrency.
+3. **External Filter** — Filters results to keep only external broken links. Merges anchor text from step 1.
+
+Links with state `BROKEN` (404, 410, 521, connection errors) are stored as broken link opportunities.
+
+**Why Linkinator?** Reduces false positives from bot-blocking servers, handles rate limits automatically, and eliminates edge cases that manual `axios.head()` calls miss.
 
 ### 6. Opportunity Classifier Worker
 
