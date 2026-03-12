@@ -282,12 +282,16 @@ async function automationRoutes(fastify, deps) {
         const campaignId = req.query.campaignId;
 
         let sql = `
-      SELECT o.*, c.email as contact_email, c.name as contact_name, d.quality_score as domain_score
-      FROM opportunities o
-      LEFT JOIN contacts c ON c.domain = o.domain
-      LEFT JOIN domains d ON d.normalized = o.domain
-      WHERE o.score >= $1 AND o.status = $2
-    `;
+            SELECT 
+                o.*, 
+                string_agg(DISTINCT c.email, ', ') as contact_email, 
+                string_agg(DISTINCT c.name, ', ') as contact_name, 
+                d.quality_score as domain_score
+            FROM opportunities o
+            LEFT JOIN contacts c ON c.domain = o.domain
+            LEFT JOIN domains d ON d.normalized = o.domain
+            WHERE o.score >= $1 AND o.status = $2
+        `;
         const params = [minScore, status];
 
         if (type) {
@@ -299,8 +303,9 @@ async function automationRoutes(fastify, deps) {
             sql += ` AND o.campaign_id = $${params.length}`;
         }
 
+        const limitParamIndex = params.length + 1;
+        sql += ` GROUP BY o.id, d.quality_score ORDER BY o.score DESC LIMIT $${limitParamIndex}`;
         params.push(limit);
-        sql += ` ORDER BY o.score DESC LIMIT $${params.length}`;
 
         const { rows } = await db.query(sql, params);
         return rows;

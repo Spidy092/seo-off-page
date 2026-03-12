@@ -29,8 +29,9 @@ function startDirectoryFinderWorker(deps = {}) {
     const mode = config.directoryDiscovery.mode;
 
     return createWorker(QUEUE_NAMES.DIRECTORY_FINDER, async (job) => {
-        const { campaignId, keywords } = job.data;
+        const { campaignId, keywords, targetDomain } = job.data;
         if (!campaignId) throw new Error('Job requires campaignId');
+        if (!targetDomain) throw new Error('Job requires targetDomain');
 
         log.info({ campaignId, mode, keywords: keywords?.length }, 'starting directory discovery');
 
@@ -41,8 +42,8 @@ function startDirectoryFinderWorker(deps = {}) {
         // ═══════════════════════════════════════════
         log.info({ directories: directories.length, bookmarking: bookmarking.length }, 'Layer 1: importing curated seed lists');
 
-        totalInserted += await importSeedList(directories, 'directory', campaignId);
-        totalInserted += await importSeedList(bookmarking, 'social_bookmarking', campaignId);
+        totalInserted += await importSeedList(directories, 'directory', campaignId, targetDomain);
+        totalInserted += await importSeedList(bookmarking, 'social_bookmarking', campaignId, targetDomain);
 
         log.info({ totalInserted }, 'Layer 1 complete');
 
@@ -62,7 +63,7 @@ function startDirectoryFinderWorker(deps = {}) {
         if (mode === 'hybrid' && keywords?.length > 0) {
             log.info({ keywords: keywords.length }, 'Layer 3: SERP footprint mining (hybrid mode)');
 
-            const serpResults = await serpFootprintMining(keywords, campaignId, rateLimiter);
+            const serpResults = await serpFootprintMining(keywords, campaignId, targetDomain, rateLimiter);
             totalInserted += serpResults;
 
             log.info({ serpResults }, 'Layer 3 complete');
@@ -104,7 +105,22 @@ function startDirectoryFinderWorker(deps = {}) {
 //  Layer 1: Import curated seed list
 // ═══════════════════════════════════════════════════════
 
-async function importSeedList(list, type, campaignId) {
+const BLOCKLIST = [
+    'facebook.com', 'twitter.com', 'x.com', 'linkedin.com', 'instagram.com',
+    'youtube.com', 'tiktok.com', 'pinterest.com', 'reddit.com', 'quora.com',
+    'google.com', 'apple.com', 'microsoft.com', 'amazon.com', 'wikipedia.org',
+    'medium.com', 'tumblr.com', 'wordpress.com', 'blogspot.com'
+];
+
+function isBlocked(domain, targetDomain) {
+    if (domain === targetDomain) return true;
+    for (const blocked of BLOCKLIST) {
+        if (domain === blocked || domain.endsWith('.' + blocked)) return true;
+    }
+    return false;
+}
+
+async function importSeedList(list, type, campaignId, targetDomain) {
     let inserted = 0;
     let skippedDead = 0;
     const BATCH_SIZE = 10;
@@ -114,7 +130,7 @@ async function importSeedList(list, type, campaignId) {
 
         const results = await Promise.all(batch.map(async (entry) => {
             const domain = normalizeDomain(entry.url);
-            if (!domain) return null;
+            if (!domain || isBlocked(domain, targetDomain)) return null;
 
             // Liveness check — skip dead/unreachable URLs
             const alive = await checkUrlAlive(entry.url);
@@ -261,7 +277,7 @@ async function crawlForFootprints(campaignId, rateLimiter) {
 //  Layer 3: SERP footprint mining
 // ═══════════════════════════════════════════════════════
 
-async function serpFootprintMining(keywords, campaignId, rateLimiter) {
+async function serpFootprintMining(keywords, campaignId, targetDomain, rateLimiter) {
     let found = 0;
 
     const directoryFootprints = [
@@ -286,7 +302,7 @@ async function serpFootprintMining(keywords, campaignId, rateLimiter) {
 
                 for (const result of results) {
                     const domain = normalizeDomain(result.url);
-                    if (!domain) continue;
+                    if (!domain || isBlocked(domain, targetDomain)) continue;
 
                     found += await insertSerpOpportunity(
                         domain, result.url, 'directory', keyword, campaignId
@@ -307,7 +323,7 @@ async function serpFootprintMining(keywords, campaignId, rateLimiter) {
 
                 for (const result of results) {
                     const domain = normalizeDomain(result.url);
-                    if (!domain) continue;
+                    if (!domain || isBlocked(domain, targetDomain)) continue;
 
                     found += await insertSerpOpportunity(
                         domain, result.url, 'social_bookmarking', keyword, campaignId

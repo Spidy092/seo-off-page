@@ -1300,7 +1300,7 @@
                         <td><a href="${esc(o.page_url)}" target="_blank" style="color:var(--accent);text-decoration:none;">${truncate(o.page_url, 40)}</a></td>
                         <td><span class="badge badge-${o.opportunity_type || 'new'}">${esc(o.opportunity_type || '—')}</span></td>
                         <td>${scoreHtml(o.score)}</td>
-                        <td>${o.contact_email ? `<a href="mailto:${esc(o.contact_email)}" style="color:var(--accent);">${esc(o.contact_email)}</a>` : '<span style="color:var(--text-muted)">—</span>'}</td>
+                        ${renderEmailCell(o.contact_email)}
                         <td><span class="badge badge-${o.status || 'new'}">${esc(o.status || 'new')}</span></td>
                     </tr>
                 `).join('');
@@ -1444,6 +1444,30 @@
         }
 
         // ─── Helpers ───
+        function renderEmailCell(emailString) {
+            if (!emailString) return '<td><span style="color:var(--text-muted)">—</span></td>';
+
+            const emails = emailString.split(',').map(e => e.trim()).filter(Boolean);
+            if (emails.length === 0) return '<td><span style="color:var(--text-muted)">—</span></td>';
+
+            const primary = emails[0];
+            let html = `<td><a href="mailto:${esc(primary)}" style="color:var(--accent);">${esc(primary)}</a>`;
+
+            if (emails.length > 1) {
+                const others = emails.slice(1).join(', ');
+                html += ` <span class="badge" title="${esc(others)}" style="cursor:help; background: rgba(255,255,255,0.1); font-size: 0.65rem;">+${emails.length - 1}</span>`;
+            }
+
+            html += '</td>';
+            return html;
+        }
+
+        function getSourceType(sourceDomain) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
         function esc(str) {
             if (!str) return '';
             const div = document.createElement('div');
